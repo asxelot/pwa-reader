@@ -1,0 +1,21 @@
+{
+  "name": "PWA Reader",
+  "short_name": "PWAR",
+  "description": "Simple web application for reading EPUB files",
+
+  "scope": "/pwa-reader/",
+  "start_url": "/pwa-reader/",
+
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+
+  "display": "fullscreen", 
+  
+  "icons": [
+      {
+        "src": "/pwa-reader/img/icon.png",
+        "type": "image/png",
+        "sizes": "700x700"
+      }
+  ]
+}

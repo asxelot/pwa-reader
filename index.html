@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub page as PWA template</title>
+    <link rel="canonical" href="https://asxelot.github.io/pwa-reader/" />
+    <link rel="manifest" href="/pwa-reader/manifest.webmanifest">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+
+  <body>
+    <h1>GitHub page as PWA template</h1>
+    …
+    <script>
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.register(
+          '/pwa-reader/sw.js',
+          { scope: '/pwa-reader/' }
+        )
+      }
+    </script>
+    <script src="js/app.js"></script>
+  </body>
+
+</html>
