@@ -23,7 +23,6 @@ function readFile(file) {
 }
 
 async function readBook() {
-  const testFontRes = await fetch('../../Fast-Font/Fast_Sans.ttf')
   const parser = new DOMParser()
   const containerXml = await fetch('META-INF/container.xml').then(r => r.text())
   const container = parser.parseFromString(containerXml, 'application/xml')

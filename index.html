@@ -18,10 +18,7 @@
 
     <script>
       if (navigator.serviceWorker) {
-        navigator.serviceWorker.register(
-          '/pwa-reader/sw.js',
-          { scope: '/pwa-reader/' }
-        )
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
       }
     </script>
     <script src="js/zip.min.js"></script>
