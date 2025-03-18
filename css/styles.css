@@ -1,6 +1,10 @@
 p {
   margin-top: 0;
   margin-bottom: 0;
+  hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  text-align: justify;
 }
 #book-container {
   margin: 20px;

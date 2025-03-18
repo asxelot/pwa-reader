@@ -34,6 +34,8 @@ async function readBook() {
   console.log('containerXml', containerXml)
   console.log('rootXml', rootXml)
 
+  bookContainer.innerHTML = ''
+
   for (const item of items) {
     const url = item.getAttribute('href')
     const text = await fetch(url).then(r => r.text())
@@ -68,9 +70,9 @@ async function getEntries(event) {
   const zipFileReader = new zip.BlobReader(blob)
   const zipReader = new zip.ZipReader(zipFileReader)
   const entries = await zipReader.getEntries()
-  console.log('entries', entries)
 
-  const cacheKey = caches.keys()[0]
+  const cacheKey = 'book-cache'
+  await caches.delete(cacheKey)
   const cache = await caches.open(cacheKey)
   for (const entry of entries) {
     const writer = new zip.BlobWriter()
