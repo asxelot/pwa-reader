@@ -1,5 +1,3 @@
-import { CACHE_NAME } from '../sw.js'
-
 const bookInput = document.getElementById('book-input')
 const bookContainer = document.getElementById('book-container')
 
@@ -72,7 +70,8 @@ async function getEntries(event) {
   const entries = await zipReader.getEntries()
   console.log('entries', entries)
 
-  const cache = await caches.open(CACHE_NAME)
+  const cacheKey = caches.keys()[0]
+  const cache = await caches.open(cacheKey)
   for (const entry of entries) {
     const writer = new zip.BlobWriter()
     const blob = await entry.getData(writer)

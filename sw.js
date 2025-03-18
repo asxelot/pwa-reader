@@ -1,6 +1,6 @@
 var GHPATH = '/pwa-reader'
 var APP_PREFIX = 'pwar_'
-var VERSION = 'version_000.1a'
+var VERSION = 'version_000.1b'
 var URLS = [
   `${GHPATH}/`,
   `${GHPATH}/index.html`,
@@ -10,7 +10,7 @@ var URLS = [
   `${GHPATH}/js/app.js`
 ]
 
-export var CACHE_NAME = APP_PREFIX + VERSION
+var CACHE_NAME = APP_PREFIX + VERSION
 self.addEventListener('fetch', function (e) {
   console.log('Fetch request : ' + e.request.url);
   e.respondWith(
