@@ -1,6 +1,6 @@
 var GHPATH = '/pwa-reader'
 var APP_PREFIX = 'pwar_'
-var VERSION = 'v0.0.0.a1'
+var VERSION = 'v0.0.0.a2'
 var URLS = [
   `${GHPATH}/`,
   `${GHPATH}/index.html`,
