@@ -8,14 +8,15 @@ var URLS = [
   `${GHPATH}/css/styles.css`,
   `${GHPATH}/img/icon.png`,
   `${GHPATH}/js/zip.min.js`,
-  `${GHPATH}/js/app.js`
+  `${GHPATH}/js/app.js`,
+  `${GHPATH}/sw.js`
 ]
 
 var CACHE_NAME = APP_PREFIX + VERSION
 self.addEventListener('fetch', function (e) {
   console.log('Fetch request : ' + e.request.url);
   e.respondWith(
-    caches.match(e.request).then(function (request) {
+    caches.match(e.request, { ignoreSearch: true }).then(function (request) {
       if (request) {
         console.log('Responding with cache : ' + e.request.url);
         return request
