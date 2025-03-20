@@ -1,5 +1,35 @@
 const bookInput = document.getElementById('book-input')
 const bookContainer = document.getElementById('book-container')
+const topMenu = document.getElementById('top-menu')
+const topMenuWrapper = document.getElementById('top-menu-wrapper')
+
+let isTopMenuVisible = false
+
+topMenuWrapper.onclick = e => {
+  if (e.target === topMenuWrapper) {
+    topMenuWrapper.style.display = 'none'
+    isTopMenuVisible = false
+  }
+}
+
+bookContainer.onclick = e => {
+  const x = e.x / bookContainer.clientWidth
+  const y = e.y / bookContainer.clientHeight
+  const clickPosition = (() => {
+    if (y <= 0.2) {
+      return 'top'
+    } else if (x <= 0.4) {
+      return 'left'
+    } else {
+      return 'right'
+    }
+  })()
+
+  if (clickPosition === 'top' && !isTopMenuVisible) {
+    isTopMenuVisible = true
+    topMenuWrapper.style.display = 'block'
+  }
+}
 
 readBook()
 
@@ -31,16 +61,13 @@ async function readBook() {
   const root = parser.parseFromString(rootXml, 'application/xml')
   const items = root.querySelectorAll('item[media-type="application/xhtml+xml"]')
 
-  console.log('containerXml', containerXml)
-  console.log('rootXml', rootXml)
-
   bookContainer.innerHTML = ''
 
   for (const item of items) {
     const url = item.getAttribute('href')
-    const text = await fetch(url).then(r => r.text())
+    const xhtml = await fetch(url).then(r => r.text())
     const div = document.createElement('div')
-    div.innerHTML = text
+    div.innerHTML = xhtml
     bookContainer.appendChild(div)
   }
 }
@@ -58,6 +85,7 @@ async function getEntries(event) {
     txt: 'text/plain',
     epub: 'application/epub+zip',
     ttf: 'font/ttf',
+    ttc: 'font/collection',
     woff: 'font/woff',
     woff2: 'font/woff2',
     otf: 'font/otf',
@@ -81,35 +109,12 @@ async function getEntries(event) {
     const url = `${location.href}${entry.filename.replace(/^\w+\//, '')}`
     const options = {
       headers: {
-        'Content-Type': mimetypes[ext]
+        'Content-Type': mimetypes[ext],
+        'Content-Length': blob.size
       }
     }
     cache.put(url, new Response(blob, options))
   }
-}
-
-async function getEpubEntryMap(entries) {
-  const imageExtentions = ['.jpg', '.jpeg', '.png', '.gif']
-  const epubEntryMap = {}
-
-  for (const entry of entries) {
-    const name = entry.filename.replace(/^[A-Z]+\//, '')
-
-    let data
-    const isImage = imageExtentions.some(ext => entry.filename.endsWith(ext))
-    if (isImage) {
-      const writer = new zip.BlobWriter()
-      const blob = await entry.getData(writer)
-      data = await blob_b64(blob)
-    } else {
-      const writer = new zip.TextWriter()
-      data = await entry.getData(writer)
-    }
-
-    epubEntryMap[name] = data
-  }
-
-  return epubEntryMap
 }
 
 async function blob_b64(blob) {

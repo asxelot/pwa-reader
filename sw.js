@@ -1,7 +1,7 @@
-var GHPATH = '/pwa-reader'
-var APP_PREFIX = 'pwar_'
-var VERSION = 'v0.0.0.a2'
-var URLS = [
+const GHPATH = '/pwa-reader'
+const APP_PREFIX = 'pwar_'
+const VERSION = 'v0.0.0.a3'
+const URLS = [
   `${GHPATH}/`,
   `${GHPATH}/index.html`,
   `${GHPATH}/css/reset.css`,
@@ -13,7 +13,7 @@ var URLS = [
   `${GHPATH}/manifest.webmanifest`
 ]
 
-var CACHE_NAME = APP_PREFIX + VERSION
+const CACHE_NAME = APP_PREFIX + VERSION
 self.addEventListener('fetch', function (e) {
   console.log('Fetch request : ' + e.request.url);
   e.respondWith(
@@ -41,7 +41,7 @@ self.addEventListener('install', function (e) {
 self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keyList) {
-      var cacheWhitelist = keyList.filter(function (key) {
+      const cacheWhitelist = keyList.filter(function (key) {
         return key.indexOf(APP_PREFIX)
       })
       cacheWhitelist.push(CACHE_NAME);

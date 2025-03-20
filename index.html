@@ -3,7 +3,7 @@
 
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>PWA Reader</title>
     <link rel="canonical" href="https://asxelot.github.io/pwa-reader/" />
     <link rel="manifest" href="/pwa-reader/manifest.webmanifest">
@@ -12,9 +12,12 @@
   </head>
 
   <body>
-    <h1>PWA Reader</h1>
-    <input type="file" id="book-input" name="book" accept="application/epub+zip, application/epub" />
     <div id="book-container"></div>
+    <div id="top-menu-wrapper">
+      <div id="top-menu">
+        <input type="file" id="book-input" name="book" accept="application/epub+zip" />
+      </div>
+    </div>
 
     <script>
       if (navigator.serviceWorker) {
