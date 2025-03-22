@@ -1,6 +1,6 @@
 {
   "name": "PWA Reader",
-  "short_name": "PWAR",
+  "short_name": "PWA Reader",
   "description": "Simple web application for reading EPUB files",
 
   "scope": "/pwa-reader/",
@@ -10,6 +10,7 @@
   "theme_color": "#ffffff",
 
   "display": "fullscreen", 
+  "orientation": "portrait",
   
   "icons": [
       {

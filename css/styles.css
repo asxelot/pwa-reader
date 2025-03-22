@@ -23,6 +23,7 @@ p {
   height: 95%;
   margin: 5%;
   overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 #book-container img {

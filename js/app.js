@@ -13,6 +13,7 @@ topMenuWrapper.onclick = e => {
 }
 
 bookContainer.onclick = e => {
+  const em = parseFloat(getComputedStyle(bookContainer)['font-size'])
   const x = e.x / bookContainer.clientWidth
   const y = e.y / bookContainer.clientHeight
   const clickPosition = (() => {
@@ -29,6 +30,14 @@ bookContainer.onclick = e => {
     isTopMenuVisible = true
     topMenuWrapper.style.display = 'block'
   }
+
+  if (clickPosition === 'right') {
+    bookContainer.scrollTop = bookContainer.scrollTop + bookContainer.clientHeight - em
+  } else if (clickPosition === 'left') {
+    bookContainer.scrollTop = bookContainer.scrollTop - bookContainer.clientHeight + em
+  }
+
+  localStorage.setItem('scrollTop', bookContainer.scrollTop)
 }
 
 readBook()
@@ -70,6 +79,23 @@ async function readBook() {
     div.innerHTML = xhtml
     bookContainer.appendChild(div)
   }
+
+  await loading()
+  scrollToLastPosition()
+}
+
+async function loading() {
+  const images = Array.from(document.images)
+  const notComplete = images.filter(img => !img.complete)
+  
+  await Promise.all(notComplete.map(img => new Promise(resolve => { img.onload = img.onerror = resolve })))
+}
+
+function scrollToLastPosition() {
+  const prevScrollPosition = localStorage.getItem('scrollTop')
+  if (prevScrollPosition) {
+    bookContainer.scrollTop = prevScrollPosition
+  }
 }
 
 async function getEntries(event) {
@@ -101,6 +127,7 @@ async function getEntries(event) {
 
   const cacheKey = 'book-cache'
   await caches.delete(cacheKey)
+  await caches.delete(undefined)
   const cache = await caches.open(cacheKey)
   for (const entry of entries) {
     const writer = new zip.BlobWriter()
