@@ -13,7 +13,10 @@ topMenuWrapper.onclick = e => {
 }
 
 bookContainer.onclick = e => {
-  const em = parseFloat(getComputedStyle(bookContainer)['font-size'])
+  const fontSize = parseFloat(getComputedStyle(bookContainer).fontSize)
+  const lineHeight = parseFloat(getComputedStyle(bookContainer).lineHeight)
+  const lineSize = fontSize + lineHeight
+  
   const x = e.x / bookContainer.clientWidth
   const y = e.y / bookContainer.clientHeight
   const clickPosition = (() => {
@@ -32,9 +35,9 @@ bookContainer.onclick = e => {
   }
 
   if (clickPosition === 'right') {
-    bookContainer.scrollTop = bookContainer.scrollTop + bookContainer.clientHeight - em
+    bookContainer.scrollTop = bookContainer.scrollTop + bookContainer.clientHeight - lineSize
   } else if (clickPosition === 'left') {
-    bookContainer.scrollTop = bookContainer.scrollTop - bookContainer.clientHeight + em
+    bookContainer.scrollTop = bookContainer.scrollTop - bookContainer.clientHeight + lineSize
   }
 
   localStorage.setItem('scrollTop', bookContainer.scrollTop)
@@ -87,7 +90,6 @@ async function readBook() {
 async function loading() {
   const images = Array.from(document.images)
   const notComplete = images.filter(img => !img.complete)
-  
   await Promise.all(notComplete.map(img => new Promise(resolve => { img.onload = img.onerror = resolve })))
 }
 
