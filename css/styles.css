@@ -16,12 +16,13 @@ p {
 }
 
 #book-container {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
-  width: 90%;
-  height: 95%;
-  margin: 5%;
+  width: auto;
+  height: 100%;
+  margin: 20px;
   overflow-x: hidden;
   overflow-y: hidden;
 }
@@ -47,6 +48,19 @@ p {
   height: 100px;
   background: white;
   border-bottom: 1px solid black;
+}
+
+#book-input {
+  display: none;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  background: #eee;
+  margin: 10px;
+  padding: 10px;
 }
 
 .buttons {

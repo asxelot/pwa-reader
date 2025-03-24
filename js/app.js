@@ -12,6 +12,35 @@ topMenuWrapper.onclick = e => {
   }
 }
 
+if (localStorage.getItem('fontSize')) {
+  bookContainer.style.fontSize = localStorage.getItem('fontSize')
+}
+
+if (localStorage.getItem('margin')) {
+  bookContainer.style.margin = localStorage.getItem('margin')
+}
+
+document.getElementById('font-decrease').onclick = () => changeFontSize(-1)
+document.getElementById('font-increase').onclick = () => changeFontSize(1)
+document.getElementById('margin-decrease').onclick = () => changePageMagin(-2)
+document.getElementById('margin-increase').onclick = () => changePageMagin(2)
+
+function changeFontSize(px) {
+  const fontSize = parseInt(getComputedStyle(bookContainer).fontSize)
+  const newFontSize = `${fontSize + px}px`
+  bookContainer.style.fontSize = newFontSize
+  localStorage.setItem('fontSize', newFontSize)
+  localStorage.setItem('scrollTop', bookContainer.scrollTop)
+}
+
+function changePageMagin(px) {
+  const margin = parseInt(getComputedStyle(bookContainer).margin)
+  const newMargin = `${margin + px}px`
+  bookContainer.style.margin = newMargin
+  localStorage.setItem('margin', newMargin)
+  localStorage.setItem('scrollTop', bookContainer.scrollTop)
+}
+
 bookContainer.onclick = e => {
   const fontSize = parseFloat(getComputedStyle(bookContainer).fontSize)
   const lineHeight = parseFloat(getComputedStyle(bookContainer).lineHeight)
@@ -83,18 +112,21 @@ async function readBook() {
     bookContainer.appendChild(div)
   }
 
-  await loading()
+  await waitForImages()
+
+  bookContainer.style.display = 'block'
+
   scrollToLastPosition()
 }
 
-async function loading() {
+async function waitForImages() {
   const images = Array.from(document.images)
   const notComplete = images.filter(img => !img.complete)
   await Promise.all(notComplete.map(img => new Promise(resolve => { img.onload = img.onerror = resolve })))
 }
 
 function scrollToLastPosition() {
-  const prevScrollPosition = localStorage.getItem('scrollTop')
+  const prevScrollPosition = parseInt(localStorage.getItem('scrollTop'))
   if (prevScrollPosition) {
     bookContainer.scrollTop = prevScrollPosition
   }
@@ -153,3 +185,5 @@ async function blob_b64(blob) {
   var b64 = btoa(bin)
   return b64
 }
+
+
