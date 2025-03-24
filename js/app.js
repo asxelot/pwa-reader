@@ -41,7 +41,7 @@ function changePageMagin(px) {
   localStorage.setItem('scrollTop', bookContainer.scrollTop)
 }
 
-bookContainer.onclick = e => {
+document.addEventListener('click', e => {
   const fontSize = parseFloat(getComputedStyle(bookContainer).fontSize)
   const lineHeight = parseFloat(getComputedStyle(bookContainer).lineHeight)
   const lineSize = fontSize + lineHeight
@@ -70,7 +70,7 @@ bookContainer.onclick = e => {
   }
 
   localStorage.setItem('scrollTop', bookContainer.scrollTop)
-}
+})
 
 readBook()
 
@@ -94,6 +94,9 @@ function readFile(file) {
 async function readBook() {
   const parser = new DOMParser()
   const containerXml = await fetch('META-INF/container.xml').then(r => r.text())
+
+  if (!containerXml) return 
+
   const container = parser.parseFromString(containerXml, 'application/xml')
   const rootfile = container.querySelector('rootfile')
   const fullPath = rootfile.getAttribute('full-path')
@@ -102,6 +105,7 @@ async function readBook() {
   const root = parser.parseFromString(rootXml, 'application/xml')
   const items = root.querySelectorAll('item[media-type="application/xhtml+xml"]')
 
+  bookContainer.style.display = 'none'
   bookContainer.innerHTML = ''
 
   for (const item of items) {
