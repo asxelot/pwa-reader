@@ -1,6 +1,6 @@
 const GHPATH = '/pwa-reader'
 const APP_PREFIX = 'pwar_'
-const VERSION = 'v0.0.0.a6'
+const VERSION = 'v0.0.0.a7'
 const URLS = [
   `${GHPATH}/`,
   `${GHPATH}/index.html`,
@@ -14,6 +14,15 @@ const URLS = [
 ]
 
 const CACHE_NAME = APP_PREFIX + VERSION
+
+caches.keys().then(keys => {
+  for (let key of keys) {
+    if (key.startsWith(APP_PREFIX) && key !== CACHE_NAME) {
+      caches.delete(key)
+    }
+  }
+})
+
 self.addEventListener('fetch', function (e) {
   console.log('Fetch request : ' + e.request.url);
   e.respondWith(
