@@ -6,13 +6,6 @@ const topMenuWrapper = document.getElementById('top-menu-wrapper')
 
 let isTopMenuVisible = false
 
-topMenuWrapper.onclick = e => {
-  if (e.target === topMenuWrapper) {
-    topMenuWrapper.style.display = 'none'
-    isTopMenuVisible = false
-  }
-}
-
 if (localStorage.getItem('fontSize')) {
   bookContainer.style.fontSize = localStorage.getItem('fontSize')
 }
@@ -64,6 +57,12 @@ document.addEventListener('click', e => {
     topMenuWrapper.style.display = 'block'
   }
 
+  if (isTopMenuVisible && e.target === topMenuWrapper) {
+    isTopMenuVisible = false
+    topMenuWrapper.style.display = 'none'
+    return 
+  }
+
   let newScrollTop
   if (clickPosition === 'right') {
     newScrollTop = bookContainer.scrollTop + bookContainer.clientHeight - lineSize
@@ -71,8 +70,10 @@ document.addEventListener('click', e => {
     newScrollTop = bookContainer.scrollTop - bookContainer.clientHeight + lineSize
   }
 
-  bookContainer.scrollTop = newScrollTop
-  localStorage.setItem('scrollTop', newScrollTop)
+  if (newScrollTop) {
+    bookContainer.scrollTop = newScrollTop
+    localStorage.setItem('scrollTop', newScrollTop)
+  }
 })
 
 readBook()
@@ -106,9 +107,11 @@ async function readBook() {
 
   const rootXml = await fetch(fullPath.replace(/^\w+\//, '')).then(r => r.text())
   const root = parser.parseFromString(rootXml, 'application/xml')
+  const lang = root.querySelector('language')
   const items = root.querySelectorAll('item[media-type="application/xhtml+xml"]')
 
   // bookContainer.style.display = 'none'
+  bookContainer.setAttribute('lang', lang.textContent)
   bookContainer.innerHTML = ''
 
   for (const item of items) {
