@@ -1,3 +1,4 @@
+const appContainer = document.getElementById('app-container')
 const bookInput = document.getElementById('book-input')
 const bookContainer = document.getElementById('book-container')
 const topMenu = document.getElementById('top-menu')
@@ -17,7 +18,7 @@ if (localStorage.getItem('fontSize')) {
 }
 
 if (localStorage.getItem('margin')) {
-  bookContainer.style.margin = localStorage.getItem('margin')
+  appContainer.style.padding = localStorage.getItem('margin')
 }
 
 document.getElementById('font-decrease').onclick = () => changeFontSize(-1)
@@ -34,9 +35,9 @@ function changeFontSize(px) {
 }
 
 function changePageMagin(px) {
-  const margin = parseInt(getComputedStyle(bookContainer).margin)
+  const margin = parseInt(getComputedStyle(appContainer).padding)
   const newMargin = `${margin + px}px`
-  bookContainer.style.margin = newMargin
+  appContainer.style.padding = localStorage.getItem('margin')
   localStorage.setItem('margin', newMargin)
   localStorage.setItem('scrollTop', bookContainer.scrollTop)
 }
@@ -63,13 +64,15 @@ document.addEventListener('click', e => {
     topMenuWrapper.style.display = 'block'
   }
 
+  let newScrollTop
   if (clickPosition === 'right') {
-    bookContainer.scrollTop = bookContainer.scrollTop + bookContainer.clientHeight - lineSize
+    newScrollTop = bookContainer.scrollTop + bookContainer.clientHeight - lineSize
   } else if (clickPosition === 'left') {
-    bookContainer.scrollTop = bookContainer.scrollTop - bookContainer.clientHeight + lineSize
+    newScrollTop = bookContainer.scrollTop - bookContainer.clientHeight + lineSize
   }
 
-  localStorage.setItem('scrollTop', bookContainer.scrollTop)
+  bookContainer.scrollTop = newScrollTop
+  localStorage.setItem('scrollTop', newScrollTop)
 })
 
 readBook()
@@ -105,7 +108,7 @@ async function readBook() {
   const root = parser.parseFromString(rootXml, 'application/xml')
   const items = root.querySelectorAll('item[media-type="application/xhtml+xml"]')
 
-  bookContainer.style.display = 'none'
+  // bookContainer.style.display = 'none'
   bookContainer.innerHTML = ''
 
   for (const item of items) {
@@ -118,7 +121,7 @@ async function readBook() {
 
   await waitForImages()
 
-  bookContainer.style.display = 'block'
+  // bookContainer.style.display = 'block'
 
   scrollToLastPosition()
 }
