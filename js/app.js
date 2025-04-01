@@ -57,7 +57,7 @@ class App {
     if (e.target.tagName.toLowerCase() === 'a') {
       e.preventDefault()
       const id = e.target.href.split('#')[1]
-      return document.getElementById(id).scrollIntoView()
+      return document.getElementById(id)?.scrollIntoView()
     }
 
     const fontSize = parseFloat(getComputedStyle(this.bookContainer).fontSize)
