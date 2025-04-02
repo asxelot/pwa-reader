@@ -1,6 +1,6 @@
 const GHPATH = '/pwa-reader'
 const APP_PREFIX = 'pwar_'
-const VERSION = 'v0.0.0.a13'
+const VERSION = 'v0.0.0.a14'
 const URLS = [
   `${GHPATH}/`,
   `${GHPATH}/index.html`,

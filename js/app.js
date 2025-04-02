@@ -14,12 +14,12 @@ class App {
 
   initUserStyles() {
     const fontSize = localStorage.getItem('fontSize')
-    const margin = localStorage.getItem('margin')
+    const padding = localStorage.getItem('padding')
     if (fontSize) {
       this.bookContainer.style.fontSize = fontSize
     }
-    if (margin) {
-      this.appContainer.style.padding = margin
+    if (padding) {
+      this.appContainer.style.padding = padding
     }
   }
 
@@ -28,8 +28,8 @@ class App {
 
     document.getElementById('font-decrease').onclick = () => this.changeFontSize(-1)
     document.getElementById('font-increase').onclick = () => this.changeFontSize(1)
-    document.getElementById('margin-decrease').onclick = () => this.changePageMagin(-2)
-    document.getElementById('margin-increase').onclick = () => this.changePageMagin(2)
+    document.getElementById('padding-decrease').onclick = () => this.changePagePadding(-2)
+    document.getElementById('padding-increase').onclick = () => this.changePagePadding(2)
     document.addEventListener('click', this.handleClick.bind(this))
     this.bookInput.onchange = function () {
       self.handleFileChange(this.files)
@@ -37,18 +37,22 @@ class App {
   }
 
   changeFontSize(px) {
+    const topElement = this.getTopElement()
     const fontSize = parseInt(getComputedStyle(this.bookContainer).fontSize)
     const newFontSize = `${fontSize + px}px`
     this.bookContainer.style.fontSize = newFontSize
+    topElement.scrollIntoView()
     localStorage.setItem('fontSize', newFontSize)
     localStorage.setItem('scrollTop', this.bookContainer.scrollTop)
   }
 
-  changePageMagin(px) {
-    const margin = parseInt(getComputedStyle(this.appContainer).padding)
-    const newMargin = `${margin + px}px`
-    this.appContainer.style.padding = localStorage.getItem('margin')
-    localStorage.setItem('margin', newMargin)
+  changePagePadding(px) {
+    const topElement = this.getTopElement()
+    const padding = parseInt(getComputedStyle(this.appContainer).padding)
+    const newPadding = `${padding + px}px`
+    this.appContainer.style.padding = newPadding
+    topElement.scrollIntoView()
+    localStorage.setItem('padding', newPadding)
     localStorage.setItem('scrollTop', this.bookContainer.scrollTop)
   }
 
