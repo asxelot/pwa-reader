@@ -6,6 +6,7 @@ class App {
   topMenuWrapper = document.getElementById('top-menu-wrapper')
   loadingWrapper = document.getElementById('loading-wrapper')
 
+  bookName
   #topElement
 
   constructor() {
@@ -96,7 +97,7 @@ class App {
 
     if (newScrollTop) {
       this.bookContainer.scrollTop = newScrollTop
-      localStorage.setItem('scrollTop', newScrollTop)
+      localStorage.setItem(`${this.bookName}_position`, newScrollTop)
       this.#topElement = this.getTopElement()
     }
   }
@@ -113,7 +114,7 @@ class App {
     const reader = new FileReader()
     reader.addEventListener('load', event => {
       localStorage.setItem('scrollTop', 0)
-      this.getEntries(event).then(() => this.readBook())
+      this.getEntries(event, file).then(() => this.readBook())
     })
     reader.readAsDataURL(file)
   }
@@ -160,13 +161,13 @@ class App {
   }
 
   scrollToLastPosition() {
-    const prevScrollPosition = parseInt(localStorage.getItem('scrollTop'))
+    const prevScrollPosition = parseInt(localStorage.getItem(`${this.bookName}_position`))
     if (prevScrollPosition) {
       this.bookContainer.scrollTop = prevScrollPosition
     }
   }
 
-  async getEntries(event) {
+  async getEntries(event, file) {
     const mimetypes = {
       html: 'application/xhtml+xml',
       css: 'text/css',
@@ -210,6 +211,9 @@ class App {
       }
       cache.put(url, new Response(blob, options))
     }
+
+    this.bookName = file.name
+    localStorage.setItem('bookName', file.name)
   }
 
   getXPath(element) {
