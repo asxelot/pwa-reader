@@ -6,6 +6,8 @@ class App {
   topMenuWrapper = document.getElementById('top-menu-wrapper')
   loadingWrapper = document.getElementById('loading-wrapper')
 
+  #topElement
+
   constructor() {
     this.initUserStyles()
     this.initEvents()
@@ -37,21 +39,19 @@ class App {
   }
 
   changeFontSize(px) {
-    const topElement = this.getTopElement()
     const fontSize = parseInt(getComputedStyle(this.bookContainer).fontSize)
     const newFontSize = `${fontSize + px}px`
     this.bookContainer.style.fontSize = newFontSize
-    topElement.scrollIntoView()
+    this.#topElement?.scrollIntoView()
     localStorage.setItem('fontSize', newFontSize)
     localStorage.setItem('scrollTop', this.bookContainer.scrollTop)
   }
 
   changePagePadding(px) {
-    const topElement = this.getTopElement()
     const padding = parseInt(getComputedStyle(this.appContainer).padding)
     const newPadding = `${padding + px}px`
     this.appContainer.style.padding = newPadding
-    topElement.scrollIntoView()
+    this.#topElement?.scrollIntoView()
     localStorage.setItem('padding', newPadding)
     localStorage.setItem('scrollTop', this.bookContainer.scrollTop)
   }
@@ -97,6 +97,7 @@ class App {
     if (newScrollTop) {
       this.bookContainer.scrollTop = newScrollTop
       localStorage.setItem('scrollTop', newScrollTop)
+      this.#topElement = this.getTopElement()
     }
   }
 
