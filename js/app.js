@@ -4,8 +4,7 @@ class App {
   bookInput = document.getElementById('book-input')
   topMenu = document.getElementById('top-menu')
   topMenuWrapper = document.getElementById('top-menu-wrapper')
-
-  isTopMenuVisible = false
+  loadingWrapper = document.getElementById('loading-wrapper')
 
   constructor() {
     this.initUserStyles()
@@ -32,7 +31,7 @@ class App {
     document.getElementById('margin-decrease').onclick = () => this.changePageMagin(-2)
     document.getElementById('margin-increase').onclick = () => this.changePageMagin(2)
     document.addEventListener('click', this.handleClick.bind(this))
-    this.bookInput.onchange = function() {
+    this.bookInput.onchange = function () {
       self.handleFileChange(this.files)
     }
   }
@@ -60,10 +59,6 @@ class App {
       return document.getElementById(id)?.scrollIntoView()
     }
 
-    const fontSize = parseFloat(getComputedStyle(this.bookContainer).fontSize)
-    const lineHeight = parseFloat(getComputedStyle(this.bookContainer).lineHeight)
-    const lineSize = fontSize + lineHeight
-    
     const x = e.x / this.bookContainer.clientWidth
     const y = e.y / this.bookContainer.clientHeight
     const clickPosition = (() => {
@@ -75,25 +70,26 @@ class App {
         return 'right'
       }
     })()
-  
+
     if (clickPosition === 'top' && !this.isTopMenuVisible) {
       this.isTopMenuVisible = true
-      this.topMenuWrapper.style.display = 'block'
+      return
     }
-  
+
     if (this.isTopMenuVisible && e.target === this.topMenuWrapper) {
       this.isTopMenuVisible = false
-      this.topMenuWrapper.style.display = 'none'
-      return 
+      return
     }
-  
+
     let newScrollTop
+    const lineHeight = parseFloat(getComputedStyle(this.getTopElement())?.lineHeight)
+
     if (clickPosition === 'right') {
-      newScrollTop = this.bookContainer.scrollTop + this.bookContainer.clientHeight - lineSize
+      newScrollTop = this.bookContainer.scrollTop + this.bookContainer.clientHeight - lineHeight
     } else if (clickPosition === 'left') {
-      newScrollTop = this.bookContainer.scrollTop - this.bookContainer.clientHeight + lineSize
+      newScrollTop = this.bookContainer.scrollTop - this.bookContainer.clientHeight + lineHeight
     }
-  
+
     if (newScrollTop) {
       this.bookContainer.scrollTop = newScrollTop
       localStorage.setItem('scrollTop', newScrollTop)
@@ -120,21 +116,23 @@ class App {
   async readBook() {
     const parser = new DOMParser()
     const containerXml = await fetch('META-INF/container.xml').then(r => r.text())
-  
-    if (!containerXml) return 
-  
+
+    if (!containerXml) return
+
+    this.isLoading = true
+
     const container = parser.parseFromString(containerXml, 'application/xml')
     const rootfile = container.querySelector('rootfile')
     const fullPath = rootfile.getAttribute('full-path')
-  
+
     const rootXml = await fetch(fullPath.replace(/^\w+\//, '')).then(r => r.text())
     const root = parser.parseFromString(rootXml, 'application/xml')
     const lang = root.querySelector('language')
     const items = root.querySelectorAll('item[media-type="application/xhtml+xml"]')
-  
+
     this.bookContainer.setAttribute('lang', lang.textContent)
-    this.bookContainer.innerHTML = '' 
-  
+    this.bookContainer.innerHTML = ''
+
     for (const item of items) {
       const url = item.getAttribute('href')
       const xhtml = await fetch(url).then(r => r.text())
@@ -143,10 +141,11 @@ class App {
       el.innerHTML = xhtml
       this.bookContainer.appendChild(el)
     }
-  
+
     await this.waitForImages()
-  
     this.scrollToLastPosition()
+    this.isTopMenuVisible = false
+    this.isLoading = false
   }
 
   async waitForImages() {
@@ -182,13 +181,13 @@ class App {
       eot: 'application/vnd.ms-fontobject',
       sfnt: 'application/font-sfnt'
     }
-  
+
     const res = await fetch(event.target.result)
     const blob = await res.blob()
     const zipFileReader = new zip.BlobReader(blob)
     const zipReader = new zip.ZipReader(zipFileReader)
     const entries = await zipReader.getEntries()
-  
+
     const cacheKey = 'book-cache'
     await caches.delete(cacheKey)
     await caches.delete(undefined)
@@ -206,6 +205,61 @@ class App {
       }
       cache.put(url, new Response(blob, options))
     }
+  }
+
+  getXPath(element) {
+    let selector = ''
+    let foundRoot
+    let currentElement = element
+
+    do {
+      const tagName = currentElement.tagName.toLowerCase()
+      const parentElement = currentElement.parentElement
+
+      if (parentElement.childElementCount > 1) {
+        const parentsChildren = [...parentElement.children]
+        let tag = []
+        parentsChildren.forEach(child => {
+          if (child.tagName.toLowerCase() === tagName) tag.push(child)
+        })
+
+        if (tag.length === 1) {
+          selector = `/${tagName}${selector}`
+        } else {
+          const position = tag.indexOf(currentElement) + 1
+          selector = `/${tagName}[${position}]${selector}`
+        }
+
+      } else {
+        selector = `/${tagName}${selector}`
+      }
+
+      currentElement = parentElement
+      foundRoot = parentElement.tagName.toLowerCase() === 'html'
+      if (foundRoot) selector = `/html${selector}`
+    }
+    while (foundRoot === false)
+
+    return selector
+  }
+
+  get isTopMenuVisible() {
+    return this.topMenuWrapper.style.display === 'flex'
+  }
+  set isTopMenuVisible(value) {
+    this.topMenuWrapper.style.display = value ? 'flex' : 'none'
+  }
+
+  get isLoading() {
+    return this.loadingWrapper.style.display === 'flex'
+  }
+  set isLoading(value) {
+    this.loadingWrapper.style.display = value ? 'flex' : 'none'
+  }
+
+  getTopElement() {
+    const padding = parseInt(getComputedStyle(this.appContainer).padding)
+    return document.elementFromPoint(padding, padding)
   }
 }
 
